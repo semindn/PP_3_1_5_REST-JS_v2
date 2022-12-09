@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователь</title>
+</head>
+<body>
+    <h2>Данные пользователя</h2>
+    <br>
+    <a th:href="@{/}">На главную</a>
+    <br>
+    <th:block>
+        <table>
+            <tr>
+                <td><b>ID:</b></td>
+                <td th:text = "${user.getId()}"></td>
+            </tr>
+            <tr>
+                <td><b>Имя:</b></td>
+                <td th:text = "${user.getFirstName()}"></td>
+            </tr>
+            <tr>
+                <td><b>Фамилия:</b></td>
+                <td th:text = "${user.getLastName()}"></td>
+            </tr>
+            <tr>
+                <td><b>Возраст:</b></td>
+                <td th:text = "${user.getAge()}"></td>
+            </tr>
+        </table>
+
+<!--        <p ></p>-->
+<!--        <p><b>Имя:</b></p>-->
+<!--        <p th:text = "${user.getFirstName()}"></p>-->
+<!--        <p><b>Фамилия:</b></p>-->
+<!--        <p th:text = "${user.getLastName()}"></p>-->
+<!--        <p><b>Возраст:</b></p>-->
+<!--        <p th:text = "${user.getAge()}"></p>-->
+    </th:block>
+
+
+
+</body>
+</html>
