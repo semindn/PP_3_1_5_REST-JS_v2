@@ -7,8 +7,11 @@
 <body>
     <h2>Данные пользователя</h2>
     <br>
-    <a th:href="@{/}">На главную</a>
+    <a th:href="@{/admin}">Назад к списку пользователей</a>
     <br>
+    <a th:href="@{/logout}">Выйти</a>
+    <br>
+
     <th:block>
         <table>
             <tr>
@@ -27,18 +30,16 @@
                 <td><b>Возраст:</b></td>
                 <td th:text = "${user.getAge()}"></td>
             </tr>
+            <tr>
+                <td><b>Логин:</b></td>
+                <td th:text = "${user.getLogin()}"></td>
+            </tr>
+            <tr>
+                <td><b>Роли:</b></td>
+                <td th:text = "${user.getRoles()}"></td>
+            </tr>
         </table>
-
-<!--        <p ></p>-->
-<!--        <p><b>Имя:</b></p>-->
-<!--        <p th:text = "${user.getFirstName()}"></p>-->
-<!--        <p><b>Фамилия:</b></p>-->
-<!--        <p th:text = "${user.getLastName()}"></p>-->
-<!--        <p><b>Возраст:</b></p>-->
-<!--        <p th:text = "${user.getAge()}"></p>-->
     </th:block>
-
-
 
 </body>
 </html>
