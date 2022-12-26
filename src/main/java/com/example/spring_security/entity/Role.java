@@ -4,6 +4,7 @@ package com.example.spring_security.entity;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "313_v8_roles")
@@ -35,11 +36,6 @@ public class Role implements GrantedAuthority {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -60,5 +56,24 @@ public class Role implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return getName();
+    }
+
+    //переопределение toString, equals и hashcode
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(id, role.id) && Objects.equals(name, role.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

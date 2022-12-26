@@ -13,7 +13,7 @@ import java.util.*;
 @Table(name = "313_v8_users", uniqueConstraints = @UniqueConstraint(columnNames = {"login"}))
 public class User implements UserDetails{
 
-//поля
+    //поля
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -45,12 +45,12 @@ public class User implements UserDetails{
     )
     private Set<Role> roles = new HashSet<>();
 
-//метод для добавления роли пользователю
+    //метод для добавления роли пользователю
     public void addRole(Role role) {
         this.roles.add(role);
     }
 
-//конструкторы, гетеры и сетеры, toString
+    //конструкторы
     public User() {
     }
 
@@ -64,6 +64,7 @@ public class User implements UserDetails{
         this.roles = roles;
     }
 
+    //гетеры и сетеры
     public Long getId() {
         return id;
     }
@@ -128,6 +129,7 @@ public class User implements UserDetails{
         this.roles = roles;
     }
 
+    //переопределение toString, equals и hashcode
     @Override
     public String toString() {
         return "User{" +
@@ -141,7 +143,20 @@ public class User implements UserDetails{
                 '}';
     }
 
-// Имплементация методов UserDetails
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return enabled == user.enabled && Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(age, user.age) && Objects.equals(login, user.login) && Objects.equals(passw, user.passw) && Objects.equals(roles, user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, age, login, passw, enabled, roles);
+    }
+
+    // Имплементация методов UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Role> roles = getRoles();
