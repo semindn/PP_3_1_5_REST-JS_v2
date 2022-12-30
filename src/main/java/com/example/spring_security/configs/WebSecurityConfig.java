@@ -4,6 +4,7 @@ import com.example.spring_security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,14 +18,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserService userService;
-
-//    public WebSecurityConfig(UserService userService) {
-//        this.userService = userService;
-//    }
-
-    public WebSecurityConfig() {
+    //внедряем зависимость
+//    @Autowired
+    private final UserService userService;
+    //внедряем зависимость через конструктор
+    public WebSecurityConfig(@Lazy UserService userService) {
+        this.userService = userService;
     }
 
     @Bean
@@ -70,7 +69,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder());
-//        System.out.println(auth.userDetailsService(userService).getUserDetailsService().getAllRoles());
     }
 
 }

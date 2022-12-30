@@ -3,10 +3,11 @@ package com.example.spring_security.service;
 import com.example.spring_security.dao.UserDao;
 import com.example.spring_security.entity.Role;
 import com.example.spring_security.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -14,12 +15,15 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService{
 
-
+    //внедряем зависимость через конструктор
     private final UserDao userDao;
+    private final RoleService roleService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, RoleService roleService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
+        this.roleService = roleService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -27,15 +31,66 @@ public class UserServiceImpl implements UserService{
         return userDao.getUsers();
     }
 
+
     @Override
-    public Set<Role> getAllRoles() {
-        return userDao.getAllRoles();
+    @Transactional
+    public void updateExistingUser(User user) {
+        User newUser = new User();
+        newUser.setAge(user.getAge());
+        newUser.setEnabled(user.isEnabled());
+        newUser.setFirstName(user.getFirstName());
+        newUser.setLastName(user.getLastName());
+        newUser.setLogin(user.getLogin());
+        //присваиваем объекту newUser роль USER если у объекта user, переданного в метод пустая роль
+        //иначе перезаписываем имеющиеся в user роли в объект newUser
+        if (user.getRoles().isEmpty()){
+            newUser.addRole(roleService.getRoleByName("ROLE_USER"));
+        } else {
+            Set<Role> roles = user.getRoles();
+            for (Role roleInSet : roles) {
+                newUser.addRole(roleService.getRoleByName(roleInSet.getName()));
+            }
+        }
+        newUser.setId(user.getId());
+        // если пароль пришел пустой - его не меняли получаем хеш зашифрованного пароля по id объекта user
+        // и устанавливаем его для newUser, иначе шифруем String и устанавливаем паролем получившийся хеш для newUser
+        if (user.getPassword()==null) {
+            newUser.setPassw(getSingleUserById(user.getId()).getPassword());
+        } else {
+            newUser.setPassw(bCryptPasswordEncoder.encode(user.getPassword()));
+        }
+        userDao.updateExistingUser(newUser);
     }
 
     @Override
-    public void saveUser(User user) {
-        userDao.saveUser(user);
+    @Transactional
+    public void createNewUser(User user) {
+        if (userDao.getSingleUserByLogin(user.getLogin()) == null) {
+            User newUser = new User();
+            newUser.setAge(user.getAge());
+            newUser.setEnabled(user.isEnabled());
+            newUser.setFirstName(user.getFirstName());
+            newUser.setLastName(user.getLastName());
+            newUser.setLogin(user.getLogin());
+            //присваиваем объекту newUser роль USER если у объекта user, переданного в метод пустая роль
+            //иначе перезаписываем имеющиеся в user роли в объект newUser
+            if (user.getRoles().isEmpty()){
+                newUser.addRole(roleService.getRoleByName("ROLE_USER"));
+            } else {
+                Set<Role> roles = user.getRoles();
+                for (Role roleInSet : roles) {
+                    newUser.addRole(roleService.getRoleByName(roleInSet.getName()));
+                }
+            }
+            newUser.setPassw(bCryptPasswordEncoder.encode(user.getPassword()));
+            userDao.createNewUser(newUser);
+            System.out.println(String.format("***** Добавлен пользователь с логином %s", user.getLogin()));
+        }
+        else {
+            System.out.println(String.format("***** Пользователь с логином %s уже существует", user.getLogin()));
+        }
     }
+
 
     @Override
     public User getSingleUserById(Long id) {
@@ -48,21 +103,20 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         userDao.deleteUser(id);
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userDao.getSingleUserByLogin(login);
         if (user == null) {
             throw new UsernameNotFoundException("Пользователь с таким логином не найден");
         }
-        return user;
+//        return user;
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getRoles());
     }
 
-    @Override
-    public Role getRoleByName(String name) {
-        return userDao.getRoleByName(name);
-    }
 }

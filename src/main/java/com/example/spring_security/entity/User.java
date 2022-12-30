@@ -1,7 +1,5 @@
 package com.example.spring_security.entity;
 
-import com.example.spring_security.controler.UserController;
-//import jakarta.persistence.*;
 import javax.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,9 +33,9 @@ public class User implements UserDetails{
     private String passw;
 
     @Column(name = "enabled")
-    private boolean enabled;
+    private Boolean enabled;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "313_v8_users_roles",
             joinColumns = @JoinColumn(name = "user_id"),

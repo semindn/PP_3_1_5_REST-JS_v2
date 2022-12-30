@@ -2,8 +2,8 @@ package com.example.spring_security.controler;
 
 import com.example.spring_security.entity.Role;
 import com.example.spring_security.entity.User;
+import com.example.spring_security.service.RoleService;
 import com.example.spring_security.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -19,17 +19,18 @@ import java.util.Set;
 @Controller
 public class UserController {
 
+    //внедряем зависимость через конструктор
     private final UserService userService;
+    private final RoleService roleService;
 
-    @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
 
     @GetMapping("/")
     public String helloPage() {
-        System.out.println("asdadasdadasdadadadad");
         return "index";
     }
     @GetMapping("/user")
@@ -42,20 +43,17 @@ public class UserController {
     public String index(ModelMap model) {
         List<User> list = userService.getUsers();
         model.addAttribute("listUsers", list);
-        System.out.println("Переход по / на /index.html");
         return "admin/list_of_users";
     }
 
     @GetMapping(value = "/login")
     public String getLoginPage() {
-        System.out.println("Переход по ссылке /login на /login.html");
         return "login";
     }
 
     @RequestMapping("/login_error")
     public String loginError(Model model) {
         model.addAttribute("loginError", true);
-        System.out.println("Переход по ссылке /login_error на /login.html с сообщением \"loginError\"");
         return "login";
     }
 
@@ -65,7 +63,6 @@ public class UserController {
     public String showAllUsers(ModelMap model) {
         List<User> list = userService.getUsers();
         model.addAttribute("listUsers", list);
-        System.out.println("Открытие /admin/list_users (pages/list_of_users.html)");
         return "admin/list_of_users";
     }
 
@@ -78,9 +75,17 @@ public class UserController {
     @GetMapping("/admin/add_user")
     public String addUser(Model model){
         model.addAttribute("user", new User());
-        model.addAttribute("roles", userService.getAllRoles());
+        model.addAttribute("roles", roleService.getAllRoles());
         return "admin/form_add_user";
     }
+
+    @GetMapping("/admin/edit_user")
+    public String edit(@RequestParam(value = "id") Long id, Model model) {
+        model.addAttribute("user", userService.getSingleUserById(id));
+        model.addAttribute("roles", roleService.getAllRoles());
+        return "admin/form_edit_user";
+    }
+
     @PostMapping("/admin/save_or_update_user")
     public String saveNewOrUpdateExistUser(@ModelAttribute("user") User user,
                                 @RequestParam(value = "selectedRoles", required = false) String[] selectedRoles
@@ -88,20 +93,18 @@ public class UserController {
         if (selectedRoles != null) {
             Set<Role> roles = new HashSet<>();
             for (String elemArrSelectedRoles : selectedRoles) {
-                roles.add(userService.getRoleByName(elemArrSelectedRoles));
+                roles.add(roleService.getRoleByName(elemArrSelectedRoles));
             }
             user.setRoles(roles);
         }
-        userService.saveUser(user);
+        if (user.getId() == null) {
+            userService.createNewUser(user);
+        } else {
+            userService.updateExistingUser(user);
+        }
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/edit_user")
-    public String edit(@RequestParam(value = "id") Long id, Model model) {
-        model.addAttribute("user", userService.getSingleUserById(id));
-        model.addAttribute("roles", userService.getAllRoles());
-        return "admin/form_edit_user";
-    }
 
     @GetMapping(value = "/admin/delete_user")
     public String deleteUser (@RequestParam(value = "id") Long id, Model model) {
