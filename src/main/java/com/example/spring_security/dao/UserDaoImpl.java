@@ -1,16 +1,12 @@
 package com.example.spring_security.dao;
 
-import com.example.spring_security.entity.Role;
 import com.example.spring_security.entity.User;
 import javax.persistence.*;
 
-import com.example.spring_security.service.RoleService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public class UserDaoImpl implements UserDao{
@@ -20,14 +16,6 @@ public class UserDaoImpl implements UserDao{
     private EntityManager entityManager;
 
     //внедряем зависимость через конструктор
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final RoleService roleService;
-
-    public UserDaoImpl(BCryptPasswordEncoder bCryptPasswordEncoder, RoleService roleService) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.roleService = roleService;
-    }
-
     @Override
     public List<User> getUsers() {
         return entityManager.createQuery("select u from User u", User.class).getResultList();
@@ -35,7 +23,6 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public void updateExistingUser(User user) {
-
         entityManager.merge(user);
     }
 

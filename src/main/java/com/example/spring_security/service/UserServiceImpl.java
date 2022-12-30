@@ -109,13 +109,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    @Transactional
+    @Transactional // для Lazy загрузки через связь сущностей
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userDao.getSingleUserByLogin(login);
         if (user == null) {
             throw new UsernameNotFoundException("Пользователь с таким логином не найден");
         }
-//        return user;
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getRoles());
     }
 
