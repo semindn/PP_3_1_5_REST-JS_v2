@@ -10,6 +10,6 @@ public interface RoleService {
 
     Role getRoleByName(String name);
 
-    public void addNewRole(Role role);
+    void addNewRole(Role role);
 
 }
