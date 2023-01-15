@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService{
     public void updateExistingUser(User user) {
         User newUser = new User();
         newUser.setAge(user.getAge());
-        newUser.setEnabled(user.isEnabled());
+        newUser.setEnabled(true);
         newUser.setFirstName(user.getFirstName());
         newUser.setLastName(user.getLastName());
         newUser.setLogin(user.getLogin());
@@ -68,7 +68,11 @@ public class UserServiceImpl implements UserService{
         if (userDao.getSingleUserByLogin(user.getLogin()) == null) {
             User newUser = new User();
             newUser.setAge(user.getAge());
-            newUser.setEnabled(user.isEnabled());
+            try {
+                newUser.setEnabled(user.isEnabled());
+            } catch (NullPointerException e){
+                newUser.setEnabled(true);
+            }
             newUser.setFirstName(user.getFirstName());
             newUser.setLastName(user.getLastName());
             newUser.setLogin(user.getLogin());
@@ -84,10 +88,10 @@ public class UserServiceImpl implements UserService{
             }
             newUser.setPassw(bCryptPasswordEncoder.encode(user.getPassword()));
             userDao.createNewUser(newUser);
-            System.out.println(String.format("***** Добавлен пользователь с логином %s", user.getLogin()));
+            System.out.println("***** Добавлен пользователь с логином" + user.getLogin());
         }
         else {
-            System.out.println(String.format("***** Пользователь с логином %s уже существует", user.getLogin()));
+            System.out.println("***** Пользователь с логином %s уже существует" + user.getLogin());
         }
     }
 

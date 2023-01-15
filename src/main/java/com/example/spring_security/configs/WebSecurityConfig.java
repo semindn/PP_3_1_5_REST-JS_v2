@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,8 +19,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    //внедряем зависимость
-//    @Autowired
     private final UserService userService;
     //внедряем зависимость через конструктор
     public WebSecurityConfig(@Lazy UserService userService) {
@@ -32,9 +31,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/css/**", "/js/**", "/img/**");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-
         http.formLogin()
                 // указываем страницу с формой логина
                 .loginPage("/login")
@@ -45,17 +47,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(new LoginSuccessHandler())
                 .loginProcessingUrl("/login")
                 .permitAll();
-
         http.logout()
                 // разрешаем делать логаут всем
                 .permitAll()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login?logout")
                 .and().csrf().disable();
-
-        http
-                // делаем страницу регистрации недоступной для авторизированных пользователей
-                .authorizeRequests()
+        http.authorizeRequests()
                 //страницы аутентификаци доступна всем
                 .antMatchers("/login").anonymous()
                 .antMatchers("/").anonymous()

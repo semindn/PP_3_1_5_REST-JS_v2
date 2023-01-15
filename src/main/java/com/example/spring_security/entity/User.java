@@ -194,5 +194,15 @@ public class User implements UserDetails{
         return true;
     }
 
+    //Список ролей конкретного пользователя в строку, через пробел
+    public String getRolesToOneLineString(){
+        StringBuilder resultString = new StringBuilder();
+        for (Role role: roles){
+            String currRoleString = role.getName();
+            resultString.append(currRoleString.substring(5));
+            resultString.append(" ");
+        }
+        return resultString.toString();
+    }
 
 }

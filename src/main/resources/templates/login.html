@@ -1,22 +1,51 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link media="all" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" type="text/css">
+    <link media="all" rel="stylesheet" th:href="@{/css/login.css}" type="text/css">
+
     <title>Login page</title>
+    <style>
+      body {
+        background-color: #F8F9FA;
+      }
+    </style>
+
+    <link rel="icon" type="image/png" th:href="@{/img/icon-16x16.png}"/>
+
 </head>
 <body>
-<h3>Login page</h3>
-<p th:if="${loginError}">Wrong user or password</p>
-<form th:action="@{/login}" method="post">
-    <label for="username">Username</label>:
-    <input type="text" id="username" name="username" autofocus="autofocus" /> <br />
-    <br>
-    <label for="password">Password</label>:
-    <input type="password" id="password" name="password" /> <br />
-    <br>
-    <input type="submit" value="Log in" />
-</form>
-</body>
 
+    <form th:action="@{/login}" method="POST">
+
+        <div class="container">
+                <div>
+                  <h3><b>Please sign in</b></h3>
+                </div>
+                <div>
+                  <input type="text" id="username" name="username" class="form-control" placeholder="Login" aria-label="Login" aria-describedby="basic-addon1" autofocus="true">
+                </div>
+                <div class="input-group mb-3">
+                  <input type="password" id="password" name="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1">
+                </div>
+                <div class="d-grid gap-2 mx-auto">
+                  <button type="submit" class="btn btn-primary">Sign in</button>
+                </div>
+          </div>
+    </form>
+
+    <div class="container">
+        <p th:if="${loginError}">Wrong user or password</p>
+    </div>
+
+<!--    <img th:src="@{/img/icon-16x16.png}"/>-->
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
 </html>
