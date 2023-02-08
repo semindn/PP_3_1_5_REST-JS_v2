@@ -37,7 +37,7 @@ public class UserDaoImpl implements UserDao{
         TypedQuery<User> typedQuery = entityManager.createQuery("select u from User u where u.id = :id", User.class);
         typedQuery.setParameter("id", id);
         User user = typedQuery.getResultList().stream().findFirst().orElse(null);
-        user.setPassw(null);
+        if (user!=null) user.setPassw(null);
         return user;
     }
 
