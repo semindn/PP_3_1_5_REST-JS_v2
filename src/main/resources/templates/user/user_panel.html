@@ -15,10 +15,8 @@
 
     <!-- Navbar(Шапка) -->
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <p class="nav_caption">
-            <span class="nav_text_bold" th:text="${currentUser.getLogin()}"/>
-            with roles:
-            <span th:text="${currentUser.getRolesToOneLineString()}"/>
+        <p class="nav_caption jsFillNavBar">
+            <!-- fill_navbar.js -->
         </p>
 
         <ul class="navbar-nav px-3">
@@ -63,15 +61,8 @@
                                     <th scope="col">Role</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td th:text="${currentUser.getId()}"/>
-                                        <td th:text="${currentUser.getFirstName()}"/>
-                                        <td th:text="${currentUser.getLastName()}"/>
-                                        <td th:text="${currentUser.getAge()}"/>
-                                        <td th:text="${currentUser.getLogin()}"/>
-                                        <td th:text="${currentUser.getRolesToOneLineString()}"/>
-                                    </tr>
+                                <tbody class="jsTableCurrentUser" id="tableCurrentUser" th:data-place = "${currentUser.getId()}">
+                                    <!-- user_panel.js -->
                                 </tbody>
 
                             </table>
@@ -88,5 +79,8 @@
 
     <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/fill_navbar.js}"></script>
+    <script th:src="@{/js/user_panel.js}"></script>
+
 </body>
 </html>

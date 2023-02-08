@@ -3,6 +3,7 @@ package com.example.spring_security.service;
 import com.example.spring_security.dao.UserDao;
 import com.example.spring_security.entity.Role;
 import com.example.spring_security.entity.User;
+import com.example.spring_security.util.EntityUserNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -91,14 +93,15 @@ public class UserServiceImpl implements UserService{
             System.out.println("***** Добавлен пользователь с логином" + user.getLogin());
         }
         else {
-            System.out.println("***** Пользователь с логином %s уже существует" + user.getLogin());
+            System.out.println("***** Пользователь с логином "+user.getLogin()+ " уже существует");
         }
     }
 
 
     @Override
     public User getSingleUserById(Long id) {
-        return userDao.getSingleUserById(id);
+        Optional<User> foundUser = Optional.ofNullable(userDao.getSingleUserById(id));
+        return foundUser.orElseThrow(EntityUserNotFoundException::new);
     }
 
     @Override
